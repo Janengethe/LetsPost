@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block head %}<title>Home</title>{% endblock head %}
+
+{% block body %}
+    <h4>Login Authentication System in flask</h4>
+    <a href="{{ url_for('login') }}">Login Page</a><br>
+    <a href="{{ url_for('register') }}">Register Page</a>
+{% endblock body %}
