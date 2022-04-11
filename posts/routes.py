@@ -4,12 +4,14 @@ Module routes
 Contains the routes
 """
 from posts import app, User, db
+from flask import jsonify
 from posts.helpers import logged_in
 from posts.forms import LoginForm, RegisterForm
 from flask import render_template, url_for, redirect, flash, request
 from posts.forms import RegisterForm
 from flask_bcrypt import Bcrypt
 from flask_login import login_user, login_required, logout_user, current_user
+import requests
 
 
 bcrypt = Bcrypt(app)
@@ -17,9 +19,10 @@ bcrypt = Bcrypt(app)
 @app.route("/")
 def index():
 	"""Index route"""
-	return ("hi")
+	return render_template('index.html')
 
 @app.route('/dashboard', methods=['POST', 'GET'])
+@login_required
 def dashboard():
     return render_template('dashboard.html')
 
@@ -41,7 +44,7 @@ def register():
 		db.session.commit()
 		flash('A warm welcome!', 'success')
 		login_user(new_user)
-		return redirect(url_for('login'))
+		return redirect(url_for('dashboard'))
 
 	return render_template('register.html', user_in=user_in, form=form)
 
@@ -56,14 +59,25 @@ def login():
 		user = User.query.filter_by(email=form.email.data).first()
 		if user and bcrypt.check_password_hash(user.password, form.password.data):
 			login_user(user)
-			print (user, password)
 			return redirect(url_for('dashboard'))
 		else:
 			flash("Invalid email or password", "danger")
 	return render_template('login.html', form=form, email=email, password=password, remember=remember)
 
 @app.route('/logout', methods=['POST', 'GET'])
+@login_required
 def logout():
     logout_user()
     flash("See you later!", "success")
     return redirect(url_for('index'))
+
+
+# @app.route('/search', methods=['GET'] )
+# def search():
+#     url = 'https://swapi.dev/api/people'
+#     resp = requests.get(url)
+#     all = []
+#     all.append(resp.json()["results"])
+#     return render_template('search.html', urls=all)
+
+
