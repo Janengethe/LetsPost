@@ -12,6 +12,7 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 app.config['SECRET_KEY'] = 'uIZue4SCjF2UBgooqv+Dl8v+4IGqnd'
@@ -26,7 +27,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 class User(db.Model, UserMixin):
-	# __tablename__ = "user"
+	__tablename__ = "user"
 
 	id = db.Column(db.Integer, primary_key=True)
 	firstname = db.Column(db.String(12), nullable=False)
@@ -34,6 +35,8 @@ class User(db.Model, UserMixin):
 	username = db.Column(db.String(20), nullable=False, unique=True)
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	password = db.Column(db.String(80), nullable=False, unique=True)
+
+	lpost = db.relationship('Lpost', backref='user')
 
 	# def __init__(self, firstname, lastname, username, email, password):
 	# 	self.firstname = firstname
@@ -52,5 +55,15 @@ def validate_username(self, username):
 	"""
 	if User.query.filter_by(username.username.data).all():	
 		raise ValidationError("Username already in use.")
+
+
+class Lpost(db.Model, UserMixin):
+	__tablename__ = 'lpost'
+	id = db.Column(db.Integer, primary_key=True)
+	title = db.Column(db.String(12), nullable=False)
+	content = db.Column(db.Text)
+
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 
 from posts import routes
