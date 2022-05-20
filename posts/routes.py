@@ -16,18 +16,18 @@ import requests
 
 bcrypt = Bcrypt(app)
 
-@app.route("/")
+@app.route("/", strict_slashes=False)
 def index():
 	"""Index route"""
 	return render_template('index.html')
 
-@app.route('/dashboard', methods=['POST', 'GET'])
+@app.route('/dashboard', methods=['POST', 'GET'], strict_slashes=False)
 @login_required
 def dashboard():
     return render_template('dashboard.html')
 
 
-@app.route('/register', methods=['POST', 'GET'])
+@app.route('/register', methods=['POST', 'GET'], strict_slashes=False)
 def register():
 	"""Returns landing page in response to registration"""
 	user_in = logged_in(current_user)
@@ -48,7 +48,7 @@ def register():
 
 	return render_template('register.html', user_in=user_in, form=form)
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST', 'GET'], strict_slashes=False)
 def login():
 	"""Return home page upon login"""
 	form = LoginForm()
@@ -64,20 +64,9 @@ def login():
 			flash("Invalid email or password", "danger")
 	return render_template('login.html', form=form, email=email, password=password, remember=remember)
 
-@app.route('/logout', methods=['POST', 'GET'])
+@app.route('/logout', methods=['POST', 'GET'], strict_slashes=False)
 @login_required
 def logout():
     logout_user()
     flash("See you later!", "success")
     return redirect(url_for('index'))
-
-
-# @app.route('/search', methods=['GET'] )
-# def search():
-#     url = 'https://swapi.dev/api/people'
-#     resp = requests.get(url)
-#     all = []
-#     all.append(resp.json()["results"])
-#     return render_template('search.html', urls=all)
-
-

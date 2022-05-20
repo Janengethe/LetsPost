@@ -10,8 +10,8 @@ from posts import User
 
 class RegisterForm(FlaskForm):
 	"""Registration form"""
-	firstname = StringField(validators=[InputRequired(), Length(min=4, max=12)], render_kw={"placeholder": "First Name"})
-	lastname = StringField(validators=[InputRequired(), Length(min=4, max=12)], render_kw={"placeholder": "Last Name"})
+	firstname = StringField(validators=[InputRequired()], render_kw={"placeholder": "First Name"})
+	lastname = StringField(validators=[InputRequired()], render_kw={"placeholder": "Last Name"})
 	username = StringField(validators=[InputRequired(), Length(min=4,max=10, message="Please provide a valid name")], render_kw={"placeholder": "Username"})
 	email = StringField(validators=[InputRequired(), Email(), Length(1, 64)], render_kw={"placeholder": "Email"})
 	password = PasswordField(validators=[InputRequired(), Length(min=6,max=20)], render_kw={"placeholder": "Password"})
