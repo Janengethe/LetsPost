@@ -19,7 +19,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     email = Column(String(250), nullable=False)
-    hashed_password = Column(String(250), nullable=False)
+    password = Column(String(250), nullable=False)
     session_id = Column(String(250))
     reset_token = Column(String(250))
 
@@ -49,7 +49,7 @@ class DB:
         """Initialize a new DB instance
         """
         self._engine = create_engine("sqlite:///ldb.db")
-        Base.metadata.drop_all(self._engine)
+        # Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
 
@@ -65,11 +65,11 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> User:
+    def add_user(self, email: str, password: str) -> User:
         """
         Saves the user to the db
         """
-        user = User(email=email, hashed_password=hashed_password)
+        user = User(email=email, password=password)
         self._session.add(user)
         self._session.commit()
         return user
