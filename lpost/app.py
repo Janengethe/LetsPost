@@ -35,7 +35,7 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-@app.route('/register', methods=['POST', 'GET'], strict_slashes=False)
+@app.route('/user', methods=['POST', 'GET'], strict_slashes=False)
 def register():
     """
     end-point to register a user
@@ -65,7 +65,7 @@ def register():
             new_user = AUTH.register_user(email, password)
             
             if new_user is not None:
-                this_user = AUTH.valid_login(email, password)
+                # this_user = AUTH.valid_login(email, password)
                 flash('Account created successfully!', 'success')
                 session_id = AUTH.create_session(email)
                 msg = {"email": email, "message": "logged in"}
@@ -90,6 +90,7 @@ def login() -> str:
     remember = True if request.form.get('remember') else False
     if form.validate_on_submit():
         user = AUTH.valid_login(email, password)
+        # print("At user, {}".format(user))
         if not user:
             flash("Invalid email or password", "danger")
             return redirect(url_for('login'))
@@ -109,11 +110,22 @@ def login() -> str:
 	# 		flash("Invalid email or password", "danger")
 	# return render_template('login.html', form=form, email=email, password=password, remember=remember)
 
-@app.route('/logout', methods=['POST', 'GET'], strict_slashes=False)
-@login_required
-def logout():
-    logout_user()
-    # flash("See you later!", "success")
-    return redirect(url_for('index'))
+@app.route('/session', methods=['DELETE'], strict_slashes=False)
+def logout() -> str:
+    """
+    The request is expected to contain the session ID as a cookie
+    with key "session_id".
+    Find the user with the requested session ID.
+    If the user exists destroy the session and redirect the user to GET /.
+    If the user does not exist, respond with a 403 HTTP status.
+    """
+    s_cookie = request.cookies.get("session_id", None)
+    user = AUTH.get_user_from_session_id(s_cookie)
+    if s_cookie is None or user is None:
+        abort(403)
+    AUTH.destroy_session(user.id)
+    return redirect("/")
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
