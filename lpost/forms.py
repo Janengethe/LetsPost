@@ -3,11 +3,12 @@
 Module auth
 Handles Login, registration
 """
+from django.forms import Textarea
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField
-from wtforms.validators import InputRequired, DataRequired, Length, ValidationError, EqualTo, Email
+from wtforms.validators import InputRequired, DataRequired, Length, EqualTo, Email
 
-from db import User
+# from db import User
 
 def logged_in(current_user):
 	"""returns True if user is logged in"""
@@ -22,11 +23,7 @@ class RegisterForm(FlaskForm):
 	email = StringField(validators=[InputRequired(), Email(), Length(1, 64)], render_kw={"placeholder": "Email"})
 	password = PasswordField(validators=[InputRequired(), Length(min=6,max=20)], render_kw={"placeholder": "Password"})
 	cpwd = PasswordField(validators=[InputRequired(), Length(min=6,max=20),EqualTo("password", message="Passwords must match!")], render_kw={"placeholder": "Confirm Password"})
-	submit = SubmitField("Register")
-
-	# def validate_email(self, email):
-	# 	if User.query.filter_by(email=email.data).first():
-	# 		raise ValidationError("Email already registered!")
+	submit = SubmitField("Create")
 
 	
 class LoginForm(FlaskForm):
@@ -35,3 +32,10 @@ class LoginForm(FlaskForm):
 	password = PasswordField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
 	remember = BooleanField('Remember Me',validators= [DataRequired()])
 	submit = SubmitField("Login")
+
+
+class PostForm(FlaskForm):
+	"""Post form"""
+	title = StringField(validators=[InputRequired(), Length(1, 12)], render_kw={"placeholder": "Title"})
+	photo = StringField(validators=[InputRequired(), Length(1, 12)], render_kw={"placeholder": "Upload"})
+	recipe = StringField(validators=[InputRequired()], render_kw={"placeholder": "Recipe"})

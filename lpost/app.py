@@ -5,7 +5,7 @@ from flask_login import login_required, login_user, current_user, LoginManager, 
 from flask import Flask, abort, flash, jsonify, redirect, render_template, request, url_for
 
 from auth import Auth
-from forms import logged_in, RegisterForm, LoginForm
+from forms import logged_in, RegisterForm, LoginForm, PostForm
 
 SECRET_KEY = os.urandom(32)
 
@@ -26,11 +26,12 @@ AUTH = Auth()
 
 @app.route("/", methods=['GET'], strict_slashes=False)
 def status() -> str:
-    """Basic flask app"""
-    return render_template('index.html')
+    """Home"""
+    form = PostForm()
+
+    return render_template('index.html', form=form)
 
 @app.route('/dashboard', methods=['POST', 'GET'], strict_slashes=False)
-@login_required
 def dashboard():
     return render_template('dashboard.html')
 
@@ -43,19 +44,6 @@ def register():
         curl -XPOST localhost:5000/register -d
         'email=bob@me.com' -d 'password=mySuperPwd' -v
     """
-    # email = request.form.get("email")
-    # password = request.form.get("password")
-    # try:
-    #     new_user = AUTH.register_user(email, password)
-    #     # used AUTH. DB is a lower abstraction that is proxied by Auth
-    #     if new_user is not None:
-    #         return jsonify({
-    #             "email": new_user.email,
-    #             "message": "user created"
-    #             })
-    # except ValueError:
-    #     return jsonify({"message": "email already registered"}), 400
-
     user_in = logged_in(current_user)
     form = RegisterForm()
     if form.validate_on_submit():
@@ -85,31 +73,24 @@ def login() -> str:
     return a JSON payload of the form
     """
     form = LoginForm()
-    email = request.form.get('email')
-    password = request.form.get('password')
+    email = request.form.get("email")
+    password = request.form.get("password")
     remember = True if request.form.get('remember') else False
     if form.validate_on_submit():
         user = AUTH.valid_login(email, password)
-        # print("At user, {}".format(user))
-        if not user:
-            flash("Invalid email or password", "danger")
-            return redirect(url_for('login'))
-            
-        session_id = AUTH.create_session(email)
-        msg = {"email": email, "message": "logged in"}
-        response = jsonify(msg)
-        response.set_cookie("session_id", session_id)
-        return redirect(url_for('dashboard'))
+        if user:
+            session_id = AUTH.create_session(email)
+            # get_user = AUTH.get_user_from_session_id(session_id)
+            msg = {"email": email, "message": "logged in"}
+            response = jsonify(msg)
+            response.set_cookie("session_id", session_id)
+            print(response)
+            login_user(current_user)
+            return redirect(url_for('dashboard'))
+        else:
+            flash("Invalid email or password. Try again", "danger")
     return render_template('login.html', form=form, email=email, password=password, remember=remember)
-	# if form.validate_on_submit():
-	# 	user = User.query.filter_by(email=form.email.data).first()
-	# 	if user and bcrypt.check_password_hash(user.password, form.password.data):
-	# 		login_user(user)
-	# 		return redirect(url_for('dashboard'))
-	# 	else:
-	# 		flash("Invalid email or password", "danger")
-	# return render_template('login.html', form=form, email=email, password=password, remember=remember)
-
+	
 @app.route('/session', methods=['DELETE'], strict_slashes=False)
 def logout() -> str:
     """
