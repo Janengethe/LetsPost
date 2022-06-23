@@ -30,7 +30,7 @@ class LoginForm(FlaskForm):
 
 class PostForm(FlaskForm):
 	"""Post form"""
-	post = StringField(validators=[InputRequired(), Length(1, 12)], render_kw={"placeholder": "Title"})
-	ingridients = StringField(validators=[InputRequired(), Length(1, 12)], render_kw={"placeholder": "Upload"})
-	recipe = StringField(validators=[InputRequired()], render_kw={"placeholder": "Recipe"})
+	post = StringField('Title', validators=[DataRequired(), Length(min=4)])
+	ingridients = StringField('Ingridients', validators=[DataRequired(), Length(min=4)])
+	recipe = StringField('Recipe', validators=[DataRequired(), Length(min=4)])
 	submit = SubmitField('Post')

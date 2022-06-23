@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Create Post{% endblock %}
+
+{% block content %}
+<h1>Post</h1>
+
+<div class='container'>
+    <form method='POST' action='/create_post'>
+        {% if form %}
+        {{ form.hidden_tag() }}
+        <div class="col align-self-center">
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ form.post.label(class="form-control-label") }}
+                    {% if form.post.errors %}
+                    {{ form.post(class="form-control form-control-sm is-invalid") }}
+                    <div class='invalid-feedback'>
+                        {% for error in form.post.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form.post(placeholder="Title", class="form-control form-control-sm") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.ingridients.label(class="form-control-label") }}
+                    {% if form.ingridients.errors %}
+                    {{ form.ingridients(class="form-control form-control-sm is-invalid") }}
+                    <div class='invalid-feedback'>
+                        {% for error in form.ingridients.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form.ingridients(placeholder="Ingridients", class="form-control
+                    form-control-sm") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.recipe.label(class="form-control-label") }}
+                    {% if form.recipe.errors %}
+                    {{ form.recipe(class="form-control form-control-sm is-invalid") }}
+                    <div class='invalid-feedback'>
+                        {% for error in form.recipe.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form.recipe(placeholder="Recipe", class="form-control
+                    form-control-sm") }}
+                    {% endif %}
+                </div>
+                
+                
+                <div class="form-group text-center">
+                    <!--{{ form.submit.label(class="form-control") }}-->
+                    {{ form.submit(class="btn btn-outline-info") }}
+                </div>
+            </fieldset>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+{% endblock %}

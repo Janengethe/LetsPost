@@ -48,7 +48,7 @@ class Post(Base):
 
     id = Column(Integer, primary_key=True)
     post = Column(String(12), nullable=False)
-    ingridients = Column(Text, unique=True, nullable=False)
+    ingridients = Column(Text, nullable=False)
     recipe = Column(Text, nullable=False)
 
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)

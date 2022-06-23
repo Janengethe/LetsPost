@@ -17,7 +17,7 @@ login_user.login_message = 'Please, Login to continue'
 
 @login_user.user_loader
 def find_user(user):
-    from posts.classes import storage
+    from posts.database import storage
     return storage.get_user_by_id(user)
 
 
