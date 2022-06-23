@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<center><br><br>
+    <h1>{% if user %}{{ user.email }}'s{% endif %} Dashboard</h1>
+    <p>Lets see your Posts!<p>
+  </center>
+
+  <!-- FUNCTION TO UPDATE AND DELETE POSTS -->
+<script>
+    function save_to_DB(post_id) {
+      let editElem = document.getElementById("edit" + post_id);
+      let updated_data = editElem.innerHTML + ",id=" + post_id;
+      //console.log("updated_data is " + updated_data)
+  
+      let xhttp = new XMLHttpRequest();
+      let url = "http://localhost:5000/dashboard"
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          let status = document.getElementById("status" + post_id);
+          status.innerHTML = "Post Updated!";
+        }
+      };
+  
+      xhttp.open("POST", url, true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("updated_post=" + updated_data);
+    }
+  
+    function delete_from_DB(post_id) {
+      let editElem = document.getElementById("edit" + post_id);
+      let post_to_delete = post_id;
+      //console.log('post_to_delete is ' + post_to_delete)
+  
+      let xhttp = new XMLHttpRequest();
+      let url = "http://localhost:5000/dashboard"
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("deleted" + post_id).innerHTML = "Deleted!";
+          document.getElementById("status" + post_id).innerHTML =
+            "Post Deleted!";
+        }
+      }
+  
+      xhttp.open("DELETE", url, true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("post_to_delete=" + post_to_delete);
+    }
+  
+    function confirm_delete(post_id) {
+      if (confirm("Are you sure you want to delete? Press cancel if not.")) {
+        delete_from_DB(post_id);
+      }
+    }
+  
+    function add_post() {
+      const postUrl = `${location.origin}`;
+      location.href = postUrl + `/`;
+    }
+  </script>
+  
+
+  <!-- POPULATE PAGE WITH SUMMARY OF POSTS -->
+<br><div class="inspiration"><h1>Current Posts</h1></div><br>
+
+<center>
+  <button class="ui yellow button" role="button" onclick="add_post()">
+    Add Post
+  </button>
+</center>
+
+
+<div role="list" class="ui divided middle aligned list">
+  <div role="listitem" class="item">
+    <!-- UPDATE/DELETE BUTTONS -->
+    {% if post_obj[1] == True %}
+    <div class="right floated content">
+      <div class="ui buttons">
+        <button class="ui button" role="button" onclick="save_to_DB({{post_obj[0].id}})">
+          Update
+        </button>
+        <div class="or"></div>
+        <button class="ui button" role="button" onclick="confirm_delete({{post_obj[0].id}})">
+          Delete
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ENABLE EDITING IF EDITABILITY IS TRUE -->
+    <div class="content">
+      <div id="deleted{{post_obj[0].id}}">
+	{% if post_obj[1] == True %}
+	<h3 id="edit{{post_obj[0].id}}" class="post" contenteditable="true"><span><i class="edit icon"></i></span>
+	  {% else %}
+	  <h3 class="post">
+	    {% endif %}
+	    {{ post_obj[0].title }}
+	  </h3>
+	  
+      </div>
+    </div>
+  </div>
+</div>
+<!-- WRITE 'SAVED' OR 'DELETED' ON BUTTON CLICK -->
+<div id="status{{post_obj[0].id}}" class="post_update">&nbsp;</div><br>
+{% endblock %}
