@@ -23,17 +23,17 @@
               <a class="nav-link" href="{{ url_for('index')}}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('index')}}">Register</a>
+              <a class="nav-link" href="{{ url_for('register')}}">Register</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('index')}}">Login</a>
+              <a class="nav-link" href="{{ url_for('login')}}">Login</a>
             </li>
             <li class="nav-item">
               <!-- for the status update if enabled or disabled -->
-              <a class="nav-link {{status}}" href="{{ url_for('index')}}" tabindex="-1" >Your Posts(to change to users)</a>
+              <a class="nav-link {{status}}" href="{{ url_for('create_post')}}" tabindex="-1" >Your Posts</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link {{status}}" href="{{ url_for('index')}}" tabindex="-1" >Logout</a>
+              <a class="nav-link {{status}}" href="{{ url_for('logout')}}" tabindex="-1" >Logout</a>
             </li>
           </ul>
         </div>

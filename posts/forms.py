@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, DataRequired, Length, EqualTo, Email, ValidationError
 
-from posts.classes import storage
+from posts.database import storage
 
 class RegisterForm(FlaskForm):
 	"""Registration form"""
@@ -30,7 +30,7 @@ class LoginForm(FlaskForm):
 
 class PostForm(FlaskForm):
 	"""Post form"""
-	title = StringField(validators=[InputRequired(), Length(1, 12)], render_kw={"placeholder": "Title"})
+	post = StringField(validators=[InputRequired(), Length(1, 12)], render_kw={"placeholder": "Title"})
 	ingridients = StringField(validators=[InputRequired(), Length(1, 12)], render_kw={"placeholder": "Upload"})
 	recipe = StringField(validators=[InputRequired()], render_kw={"placeholder": "Recipe"})
 	submit = SubmitField('Post')

@@ -15,4 +15,10 @@ login_user.login_view = 'login'
 login_user.login_message = 'Please, Login to continue'
 
 
+@login_user.user_loader
+def find_user(user):
+    from posts.classes import storage
+    return storage.get_user_by_id(user)
+
+
 from posts import routes
