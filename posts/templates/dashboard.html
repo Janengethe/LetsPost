@@ -2,7 +2,14 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1>Posts</h1>
+<table style="width:100%">
+    <thead><tr><th>Meal</th><th>Ingridients</th><th>Recipe</th></tr></thead>
+    <tbody>
+        {% for post in posts %}
+    <tr><td>{{ post.post }}</td><td>{{ post.ingridients }}</td><td>{{ post.recipe }}</td></tr>
+    {% endfor %}
+    </tbody>
+    </table>
 
 
 {% endblock %}

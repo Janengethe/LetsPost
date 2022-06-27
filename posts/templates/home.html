@@ -2,7 +2,23 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>Posts</h1>
+{% block nav %}
+{% if uin %}
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('register')}}">Register</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('login')}}">Login</a>
+  </li>
+  <li class="nav-item">
+    <!-- for the status update if enabled or disabled -->
+    <a class="nav-link" href="{{ url_for('create_post')}}" tabindex="-1" >Post</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('logout')}}" tabindex="-1" >Logout</a>
+  </li>
+  {% endif %}
+{% endblock %}
 
 
 {% endblock %}

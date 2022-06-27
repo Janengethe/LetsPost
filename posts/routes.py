@@ -2,7 +2,7 @@
 from flask import flash, redirect, render_template, request, session, url_for
 from flask_cors import CORS
 from flask_login import current_user, login_required, login_user, logout_user
-from posts.database.engine import User, Post
+from posts.database.engine import DBStorage, User, Post
 from werkzeug.security import check_password_hash
 from posts import app
 from posts.database import storage
@@ -19,10 +19,16 @@ def index():
     uin = helper_methods.logged_in(current_user)
     return render_template("home.html", uin=uin)
 
-@app.route('/dashboard', methods=['POST', 'GET'])
+@app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    uin = helper_methods.logged_in(current_user)
+    user_id = current_user.id
+    posts = storage.get_post_by_user(user_id)
+    # print(posts)
+    # for post in posts:
+    #     print(post.post, post.ingridients, post.recipe)
+    return render_template('dashboard.html', uin=uin, posts=posts)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -36,7 +42,7 @@ def register():
         return redirect(url_for('dashboard'))
     return render_template('register.html', uin=uin, form=form)
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     uin = helper_methods.logged_in(current_user)
     if current_user.is_authenticated:
@@ -44,6 +50,7 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
+        print('second trial')
         user = storage.get_user_by_email(form.email.data)
         if user and check_password_hash(user.password, form.password.data):
             login_user(user)
