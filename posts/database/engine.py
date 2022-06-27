@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
+"""Module engine"""
+
 from flask_login import UserMixin
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import create_engine, Column, String, DateTime, Integer, ForeignKey, Text
-
-
-# from posts.classes.models import User, Post
-
-# from posts.helper_methods import _hash_password
+from sqlalchemy import create_engine, Column, String, Integer, ForeignKey, Text
 
 Base = declarative_base()
 
 
 class User(Base, UserMixin):
-    """User class inherits from declarative base"""
+    """
+    User class inherits from declarative base
+    """
     __tablename__ = "users"
 
     id = Column(Integer, nullable=False, primary_key=True)
@@ -22,7 +21,7 @@ class User(Base, UserMixin):
     password = Column(String(250), nullable=False)
     posts = relationship('Post', backref='users', cascade='delete')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         instantiates user object
         """
@@ -35,12 +34,13 @@ class User(Base, UserMixin):
             else:
                 setattr(self, k, v)
 
-    def __set_password(self, password):
+    def __set_password(self, password: str) -> None:
         """
             Encrypts password
         """
         secure_pw = generate_password_hash(password)
         setattr(self, 'password', secure_pw)
+
 
 class Post(Base):
     """Post class inherits from declarative base"""
@@ -53,35 +53,41 @@ class Post(Base):
 
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
 
-    def __init__(self, **kwargs):
-        """Initialize instance attributes"""
+    def __init__(self, **kwargs) -> None:
+        """
+        Initialize instance attributes
+        """
         self.post = ""
         self.ingridients = ""
         self.recipe = ""
         for k, v in kwargs.items():
             setattr(self, k, v)
+
+
 class DBStorage():
+    """Class for database storage"""
     __engine = None
     __session = None
 
     def __init__(self) -> None:
+        """Initialization"""
         self.__engine = create_engine('sqlite:///ldb.db')
         self.__session = Base.metadata.create_all(self.__engine)
         factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(factory)
         self.__session = Session()
 
-    def save(self, obj):
+    def save(self, obj: dict) -> None:
         """
            create new obj and save entry to db
         """
         try:
             self.__session.add(obj)
             self.__session.commit()
-        except:
+        except ValueError:
             self.__session.rollback()
 
-    def delete(self, obj):
+    def delete(self, obj: dict) -> None:
         """
            delete obj from db
         """
@@ -89,14 +95,15 @@ class DBStorage():
         self.__session.commit()
         self.__session.flush()
 
-    def all(self):
+    def all(self) -> dict:
+        """Returns all items from the database"""
         post_dic = {}
         for obj in self.__session.query(Post).all():
             key = obj.id
             post_dic[key] = obj
         return post_dic
 
-    def count(self):
+    def count(self) -> int:
         """
            count posts
         """
@@ -105,7 +112,7 @@ class DBStorage():
             total += 1
         return total
 
-    def get_post_by_id(self, post_id):
+    def get_post_by_id(self, post_id: int) -> Post:
         """
            return post if username given
         """
@@ -115,7 +122,7 @@ class DBStorage():
         except (IndexError, TypeError):
             return None
 
-    def get_post_by_user(self, user_id):
+    def get_post_by_user(self, user_id: int) -> Post:
         """
             return post associated with user
         """
@@ -125,7 +132,7 @@ class DBStorage():
         except (IndexError, TypeError):
             return None
 
-    def get_user_by_email(self, email):
+    def get_user_by_email(self, email: str) -> User:
         """
             return user info
         """
@@ -136,7 +143,7 @@ class DBStorage():
             print('Error at engine.get_user_by_email X____X')
             return None
 
-    def get_user_by_id(self, user_id):
+    def get_user_by_id(self, user_id: int) -> User:
         """
             return user info
         """
@@ -147,7 +154,7 @@ class DBStorage():
             print('Error at engine.get_user_by_id X____X')
             return None
 
-    def reload(self):
+    def reload(self) -> None:
         """
            creates all tables in database & session from engine
         """
@@ -157,7 +164,7 @@ class DBStorage():
                 bind=self.__engine,
                 expire_on_commit=False))
 
-    def close(self):
+    def close(self) -> None:
         """
             calls remove() on private session attribute (self.session)
         """

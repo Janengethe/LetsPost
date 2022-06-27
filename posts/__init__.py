@@ -4,6 +4,8 @@ import os
 from flask_login import LoginManager
 from flask import Flask
 
+from posts.database.engine import User
+
 
 SECRET_KEY = os.urandom(32)
 
@@ -16,7 +18,8 @@ login_user.login_message = 'Please, Login to continue'
 
 
 @login_user.user_loader
-def find_user(user):
+def find_user(user: User) -> User:
+    """Locate user by id"""
     from posts.database import storage
     return storage.get_user_by_id(user)
 

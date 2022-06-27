@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Module app"""
 from posts import app
 
 if __name__ == "__main__":

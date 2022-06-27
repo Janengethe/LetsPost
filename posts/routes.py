@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
+"""Module routes"""
 from flask import flash, redirect, render_template, request, session, url_for
 from flask_cors import CORS
 from flask_login import current_user, login_required, login_user, logout_user
-from posts.database.engine import DBStorage, User, Post
 from werkzeug.security import check_password_hash
+
+from posts.database.engine import DBStorage, User, Post
 from posts import app
 from posts.database import storage
 from posts.forms import LoginForm, RegisterForm, PostForm
-
 from posts import helper_methods
+
+
 app.url_map.strict_slashes = False
 
 cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
@@ -16,12 +19,15 @@ cors = CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """Home route"""
     uin = helper_methods.logged_in(current_user)
     return render_template("home.html", uin=uin)
+
 
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
+    """Dashboard route"""
     uin = helper_methods.logged_in(current_user)
     user_id = current_user.id
     posts = storage.get_post_by_user(user_id)
@@ -30,8 +36,10 @@ def dashboard():
     #     print(post.post, post.ingridients, post.recipe)
     return render_template('dashboard.html', uin=uin, posts=posts)
 
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    """Register route"""
     uin = helper_methods.logged_in(current_user)
     form = RegisterForm()
     if form.validate_on_submit():
@@ -42,12 +50,14 @@ def register():
         return redirect(url_for('dashboard'))
     return render_template('register.html', uin=uin, form=form)
 
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    """Login route"""
     uin = helper_methods.logged_in(current_user)
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
-    
+
     form = LoginForm()
     if form.validate_on_submit():
         print('second trial')
@@ -59,20 +69,26 @@ def login():
             flash('Invalid email or password!', 'danger')
     return render_template('login.html', uin=uin, form=form)
 
+
 @app.route('/logout', methods=['GET'])
 def logout():
-    """return landing page in response to logout"""
+    """return home page in response to logout"""
     logout_user()
     flash("See you later!", "success")
     return redirect(url_for('index'))
 
+
 @app.route('/create_post', methods=['POST', 'GET'])
 @login_required
 def create_post():
+    """Create a post"""
     uin = helper_methods.logged_in(current_user)
     form = PostForm()
     if form.validate_on_submit():
-        obj = Post(post=form.post.data, ingridients=form.ingridients.data, recipe=form.recipe.data)
+        obj = Post(
+            post=form.post.data,
+            ingridients=form.ingridients.data,
+            recipe=form.recipe.data)
         storage.save(obj)
         if current_user.is_authenticated:
             setattr(obj, 'user_id', current_user.id)
@@ -85,15 +101,12 @@ def create_post():
             return redirect(url_for("login"))
     return render_template("post.html", uin=uin, form=form)
 
-
- 
 # @app.errorhandler(404)
 # def not_found(error):
 #     """return custom 404 page
 #        return render_template("custom_404.html")
 #      """
 #     return ({error: "Page Not Found"}, 404)
-
 
 
 # @app.after_request
