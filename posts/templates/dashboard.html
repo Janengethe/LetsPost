@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
-
+{% block nav %}
+{% if uin %}
+<li class="nav-item active">
+    <a class="nav-link" href="{{ url_for('index')}}">Home <span class="sr-only">(current)</span></a>
+  </li>
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('create_post')}}" tabindex="-1" >Post</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('logout')}}" tabindex="-1" >Logout</a>
+  </li>
+  {% endif %}
+{% endblock %}
 {% block content %}
 <table style="width:100%">
     <thead><tr><th>Meal</th><th>Ingridients</th><th>Recipe</th></tr></thead>

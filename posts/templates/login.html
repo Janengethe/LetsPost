@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 
+{% block nav %}
+<li class="nav-item">
+  <a class="nav-link" href="{{ url_for('register')}}" tabindex="-1" >Register</a>
+</li>
+{% endblock %}
+
 {% block content %}
 <div class='container'>
     <form method='POST' action='/login'>

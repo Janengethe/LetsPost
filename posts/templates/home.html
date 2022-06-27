@@ -1,24 +1,23 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
-{% block content %}
 {% block nav %}
 {% if uin %}
 <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('register')}}">Register</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('login')}}">Login</a>
-  </li>
-  <li class="nav-item">
-    <!-- for the status update if enabled or disabled -->
     <a class="nav-link" href="{{ url_for('create_post')}}" tabindex="-1" >Post</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" href="{{ url_for('logout')}}" tabindex="-1" >Logout</a>
   </li>
+  {% else %}
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('login')}}" tabindex="-1" >Login</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('register')}}" tabindex="-1" >Register</a>
+  </li>
   {% endif %}
 {% endblock %}
-
+{% block content %}
 
 {% endblock %}
