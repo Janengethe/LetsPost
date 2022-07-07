@@ -25,5 +25,5 @@ def logged_in(current_user: int) -> bool:
     try:
         _ = current_user.id
         return True
-    except ValueError:
+    except:
         return False
